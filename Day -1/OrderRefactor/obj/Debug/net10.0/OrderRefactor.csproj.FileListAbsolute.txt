@@ -1,0 +1,9 @@
+C:\Users\HP\OneDrive\Desktop\thinkschool\Day -1\OrderRefactor\obj\Debug\net10.0\OrderRefactor.csproj.AssemblyReference.cache
+C:\Users\HP\OneDrive\Desktop\thinkschool\Day -1\OrderRefactor\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\HP\OneDrive\Desktop\thinkschool\Day -1\OrderRefactor\obj\Debug\net10.0\OrderRefactor.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\HP\OneDrive\Desktop\thinkschool\Day -1\OrderRefactor\obj\Debug\net10.0\OrderRefactor.AssemblyInfoInputs.cache
+C:\Users\HP\OneDrive\Desktop\thinkschool\Day -1\OrderRefactor\obj\Debug\net10.0\OrderRefactor.AssemblyInfo.cs
+C:\Users\HP\OneDrive\Desktop\thinkschool\Day -1\OrderRefactor\obj\Debug\net10.0\OrderRefactor.csproj.CoreCompileInputs.cache
+C:\Users\HP\OneDrive\Desktop\thinkschool\Day -1\OrderRefactor\obj\Debug\net10.0\OrderRefactor.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\HP\OneDrive\Desktop\thinkschool\Day -1\OrderRefactor\obj\Debug\net10.0\OrderRefactor.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\HP\OneDrive\Desktop\thinkschool\Day -1\OrderRefactor\obj\Debug\net10.0\OrderRefactor.sourcelink.json
