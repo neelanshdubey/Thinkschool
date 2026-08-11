@@ -36,6 +36,7 @@ public static class QuoteEndpointExtensions
             CreateQuoteRequest request,
             IQuoteRepository repository,
             IQuoteValidator validator,
+            IClock clock,
             CancellationToken cancellationToken) =>
         {
             var errors = validator.Validate(
@@ -47,9 +48,12 @@ public static class QuoteEndpointExtensions
                 return Results.ValidationProblem(errors);
             }
 
-            var quote = Quote.Create(
-                request.Author,
-                request.Text);
+            var quote = new Quote
+            {
+                Author = request.Author.Trim(),
+                Text = request.Text.Trim(),
+                CreatedAt = clock.UtcNow
+            };
 
             var created = await repository.AddAsync(
                 quote,

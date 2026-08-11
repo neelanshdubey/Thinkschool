@@ -1,0 +1,224 @@
+[1mdiff --git a/Day -1/AI-Strategy-Task/OrderApi b/Day -1/AI-Strategy-Task/OrderApi[m
+[1m--- a/Day -1/AI-Strategy-Task/OrderApi[m	
+[1m+++ b/Day -1/AI-Strategy-Task/OrderApi[m	
+[36m@@ -1 +1 @@[m
+[31m-Subproject commit a9319b306ca3b014ba6f0c36e9cd735bbb31259d[m
+[32m+[m[32mSubproject commit a9319b306ca3b014ba6f0c36e9cd735bbb31259d-dirty[m
+[1mdiff --git a/Day -1/AI-Strategy-Task/OrderApi.Tests/bin/Debug/net10.0/.msCoverageSourceRootsMapping_OrderApi.Tests b/Day -1/AI-Strategy-Task/OrderApi.Tests/bin/Debug/net10.0/.msCoverageSourceRootsMapping_OrderApi.Tests[m
+[1mindex fa1036d..65ffea8 100644[m
+Binary files a/Day -1/AI-Strategy-Task/OrderApi.Tests/bin/Debug/net10.0/.msCoverageSourceRootsMapping_OrderApi.Tests and b/Day -1/AI-Strategy-Task/OrderApi.Tests/bin/Debug/net10.0/.msCoverageSourceRootsMapping_OrderApi.Tests differ
+[1mdiff --git a/Day -1/AI-Strategy-Task/OrderApi.Tests/bin/Debug/net10.0/CoverletSourceRootsMapping_OrderApi.Tests b/Day -1/AI-Strategy-Task/OrderApi.Tests/bin/Debug/net10.0/CoverletSourceRootsMapping_OrderApi.Tests[m
+[1mindex fa1036d..65ffea8 100644[m
+Binary files a/Day -1/AI-Strategy-Task/OrderApi.Tests/bin/Debug/net10.0/CoverletSourceRootsMapping_OrderApi.Tests and b/Day -1/AI-Strategy-Task/OrderApi.Tests/bin/Debug/net10.0/CoverletSourceRootsMapping_OrderApi.Tests differ
+[1mdiff --git a/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/Debug/net10.0/OrderApi.Tests.AssemblyInfo.cs b/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/Debug/net10.0/OrderApi.Tests.AssemblyInfo.cs[m
+[1mindex 710bb37..d4a7904 100644[m
+[1m--- a/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/Debug/net10.0/OrderApi.Tests.AssemblyInfo.cs[m	
+[1m+++ b/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/Debug/net10.0/OrderApi.Tests.AssemblyInfo.cs[m	
+[36m@@ -13,7 +13,7 @@[m [musing System.Reflection;[m
+ [assembly: System.Reflection.AssemblyCompanyAttribute("OrderApi.Tests")][m
+ [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")][m
+ [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")][m
+[31m-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+72a8e6fb6a3f12438ae0bb27fc273334bcab4677")][m
+[32m+[m[32m[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+25af4a5aa18500a08a62635dfc5b9f836200e114")][m
+ [assembly: System.Reflection.AssemblyProductAttribute("OrderApi.Tests")][m
+ [assembly: System.Reflection.AssemblyTitleAttribute("OrderApi.Tests")][m
+ [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")][m
+[1mdiff --git a/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/Debug/net10.0/OrderApi.Tests.AssemblyInfoInputs.cache b/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/Debug/net10.0/OrderApi.Tests.AssemblyInfoInputs.cache[m
+[1mindex 724cccd..205ae83 100644[m
+[1m--- a/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/Debug/net10.0/OrderApi.Tests.AssemblyInfoInputs.cache[m	
+[1m+++ b/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/Debug/net10.0/OrderApi.Tests.AssemblyInfoInputs.cache[m	
+[36m@@ -1 +1 @@[m
+[31m-c66510031a5959c7694d354ea1f9e650e994e747e0fe7219b58f6c3d6ee21187[m
+[32m+[m[32m8aa1b03ffb631beae168b04ca24b4c1b23447e8a2fb24f5885cfbab63f0b992f[m
+[1mdiff --git a/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/OrderApi.Tests.csproj.nuget.dgspec.json b/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/OrderApi.Tests.csproj.nuget.dgspec.json[m
+[1mindex 6cf3a6e..ce3352f 100644[m
+[1m--- a/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/OrderApi.Tests.csproj.nuget.dgspec.json[m	
+[1m+++ b/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/OrderApi.Tests.csproj.nuget.dgspec.json[m	
+[36m@@ -1,17 +1,17 @@[m
+ {[m
+   "format": 1,[m
+   "restore": {[m
+[31m-    "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj": {}[m
+[32m+[m[32m    "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj": {}[m
+   },[m
+   "projects": {[m
+[31m-    "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj": {[m
+[32m+[m[32m    "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj": {[m
+       "version": "1.0.0",[m
+       "restore": {[m
+[31m-        "projectUniqueName": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+[32m+[m[32m        "projectUniqueName": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+         "projectName": "OrderApi.Tests",[m
+[31m-        "projectPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+[32m+[m[32m        "projectPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+         "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",[m
+[31m-        "outputPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\obj\\",[m
+[32m+[m[32m        "outputPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\obj\\",[m
+         "projectStyle": "PackageReference",[m
+         "configFilePaths": [[m
+           "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"[m
+[36m@@ -27,8 +27,8 @@[m
+             "framework": "net10.0",[m
+             "targetAlias": "net10.0",[m
+             "projectReferences": {[m
+[31m-              "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj": {[m
+[31m-                "projectPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj"[m
+[32m+[m[32m              "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj": {[m
+[32m+[m[32m                "projectPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj"[m
+               }[m
+             }[m
+           }[m
+[36m@@ -361,14 +361,14 @@[m
+         }[m
+       }[m
+     },[m
+[31m-    "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj": {[m
+[32m+[m[32m    "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj": {[m
+       "version": "1.0.0",[m
+       "restore": {[m
+[31m-        "projectUniqueName": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj",[m
+[32m+[m[32m        "projectUniqueName": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj",[m
+         "projectName": "OrderApi",[m
+[31m-        "projectPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj",[m
+[32m+[m[32m        "projectPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj",[m
+         "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",[m
+[31m-        "outputPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\obj\\",[m
+[32m+[m[32m        "outputPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\obj\\",[m
+         "projectStyle": "PackageReference",[m
+         "configFilePaths": [[m
+           "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"[m
+[1mdiff --git a/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/project.assets.json b/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/project.assets.json[m
+[1mindex 12f2b78..dab5ff5 100644[m
+[1m--- a/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/project.assets.json[m	
+[1m+++ b/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/project.assets.json[m	
+[36m@@ -1012,11 +1012,11 @@[m
+   "project": {[m
+     "version": "1.0.0",[m
+     "restore": {[m
+[31m-      "projectUniqueName": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+[32m+[m[32m      "projectUniqueName": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+       "projectName": "OrderApi.Tests",[m
+[31m-      "projectPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+[32m+[m[32m      "projectPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",[m
+[31m-      "outputPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\obj\\",[m
+[32m+[m[32m      "outputPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\obj\\",[m
+       "projectStyle": "PackageReference",[m
+       "configFilePaths": [[m
+         "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"[m
+[36m@@ -1032,8 +1032,8 @@[m
+           "framework": "net10.0",[m
+           "targetAlias": "net10.0",[m
+           "projectReferences": {[m
+[31m-            "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj": {[m
+[31m-              "projectPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj"[m
+[32m+[m[32m            "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj": {[m
+[32m+[m[32m              "projectPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj"[m
+             }[m
+           }[m
+         }[m
+[1mdiff --git a/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/project.nuget.cache b/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/project.nuget.cache[m
+[1mindex ac062db..e80942e 100644[m
+[1m--- a/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/project.nuget.cache[m	
+[1m+++ b/Day -1/AI-Strategy-Task/OrderApi.Tests/obj/project.nuget.cache[m	
+[36m@@ -1,8 +1,8 @@[m
+ {[m
+   "version": 2,[m
+[31m-  "dgSpecHash": "evQPTHFSWuQ=",[m
+[32m+[m[32m  "dgSpecHash": "2rlRftGIV/w=",[m
+   "success": true,[m
+[31m-  "projectFilePath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+[32m+[m[32m  "projectFilePath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+   "expectedPackageFiles": [[m
+     "C:\\Users\\HP\\.nuget\\packages\\coverlet.collector\\6.0.4\\coverlet.collector.6.0.4.nupkg.sha512",[m
+     "C:\\Users\\HP\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.10\\microsoft.aspnetcore.openapi.10.0.10.nupkg.sha512",[m
+[36m@@ -26,9 +26,9 @@[m
+       "code": "NU1903",[m
+       "level": "Warning",[m
+       "message": "Package 'Microsoft.OpenApi' 2.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-v5pm-xwqc-g5wc",[m
+[31m-      "projectPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+[32m+[m[32m      "projectPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+       "warningLevel": 1,[m
+[31m-      "filePath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+[32m+[m[32m      "filePath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",[m
+       "libraryId": "Microsoft.OpenApi",[m
+       "targetGraphs": [[m
+         "net10.0"[m
+[1mdiff --git a/Day -1/OrderRefactor/obj/Debug/net10.0/OrderRefactor.AssemblyInfo.cs b/Day -1/OrderRefactor/obj/Debug/net10.0/OrderRefactor.AssemblyInfo.cs[m
+[1mindex 031621a..7b7968d 100644[m
+[1m--- a/Day -1/OrderRefactor/obj/Debug/net10.0/OrderRefactor.AssemblyInfo.cs[m	
+[1m+++ b/Day -1/OrderRefactor/obj/Debug/net10.0/OrderRefactor.AssemblyInfo.cs[m	
+[36m@@ -13,7 +13,7 @@[m [musing System.Reflection;[m
+ [assembly: System.Reflection.AssemblyCompanyAttribute("OrderRefactor")][m
+ [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")][m
+ [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")][m
+[31m-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+72a8e6fb6a3f12438ae0bb27fc273334bcab4677")][m
+[32m+[m[32m[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a5f99a6734260c9203280c12475ecf20bc8048b3")][m
+ [assembly: System.Reflection.AssemblyProductAttribute("OrderRefactor")][m
+ [assembly: System.Reflection.AssemblyTitleAttribute("OrderRefactor")][m
+ [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")][m
+[1mdiff --git a/Day -1/OrderRefactor/obj/Debug/net10.0/OrderRefactor.AssemblyInfoInputs.cache b/Day -1/OrderRefactor/obj/Debug/net10.0/OrderRefactor.AssemblyInfoInputs.cache[m
+[1mindex fe517c4..e0dc63d 100644[m
+[1m--- a/Day -1/OrderRefactor/obj/Debug/net10.0/OrderRefactor.AssemblyInfoInputs.cache[m	
+[1m+++ b/Day -1/OrderRefactor/obj/Debug/net10.0/OrderRefactor.AssemblyInfoInputs.cache[m	
+[36m@@ -1 +1 @@[m
+[31m-3c8dcff7e20893aa086fd9734ed5068b3e4a8ce867e098a22a7fecccd791d755[m
+[32m+[m[32mff3985933e3ff87374479fb4002879e0267380c76635c8b07c04d46b783ddea1[m
+[1mdiff --git a/Day -1/QuotesApi/Extentions/QuoteEndpointExtensions.cs b/Day -1/QuotesApi/Extentions/QuoteEndpointExtensions.cs[m
+[1mindex b206618..52208ea 100644[m
+[1m--- a/Day -1/QuotesApi/Extentions/QuoteEndpointExtensions.cs[m	
+[1m+++ b/Day -1/QuotesApi/Extentions/QuoteEndpointExtensions.cs[m	
+[36m@@ -36,7 +36,6 @@[m [mpublic static class QuoteEndpointExtensions[m
+             CreateQuoteRequest request,[m
+             IQuoteRepository repository,[m
+             IQuoteValidator validator,[m
+[31m-            IClock clock,[m
+             CancellationToken cancellationToken) =>[m
+         {[m
+             var errors = validator.Validate([m
+[36m@@ -48,12 +47,9 @@[m [mpublic static class QuoteEndpointExtensions[m
+                 return Results.ValidationProblem(errors);[m
+             }[m
+ [m
+[31m-            var quote = new Quote[m
+[31m-            {[m
+[31m-                Author = request.Author.Trim(),[m
+[31m-                Text = request.Text.Trim(),[m
+[31m-                CreatedAt = clock.UtcNow[m
+[31m-            };[m
+[32m+[m[32m            var quote = Quote.Create([m
+[32m+[m[32m                request.Author,[m
+[32m+[m[32m                request.Text);[m
+ [m
+             var created = await repository.AddAsync([m
+                 quote,[m
+[1mdiff --git a/Day -1/QuotesApi/Models/Quote.cs b/Day -1/QuotesApi/Models/Quote.cs[m
+[1mindex 1d80a9f..6207a24 100644[m
+[1m--- a/Day -1/QuotesApi/Models/Quote.cs[m	
+[1m+++ b/Day -1/QuotesApi/Models/Quote.cs[m	
+[36m@@ -9,4 +9,33 @@[m [mpublic class Quote[m
+     public string Text { get; set; } = string.Empty;[m
+ [m
+     public DateTimeOffset CreatedAt { get; set; }[m
+[32m+[m
+[32m+[m[32m    public bool IsDeleted { get; private set; }[m
+[32m+[m
+[32m+[m[32m    public static Quote Create(string author, string text)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        var trimmedAuthor = author?.Trim() ?? string.Empty;[m
+[32m+[m[32m        var trimmedText = text?.Trim() ?? string.Empty;[m
+[32m+[m
+[32m+[m[32m        if (string.IsNullOrWhiteSpace(trimmedAuthor))[m
+[32m+[m[32m            throw new DomainException("Author is required.");[m
+[32m+[m
+[32m+[m[32m        if (trimmedAuthor.Length > 200)[m
+[32m+[m[32m            throw new DomainException("Author must be 200 characters or fewer.");[m
+[32m+[m
+[32m+[m[32m        if (string.IsNullOrWhiteSpace(trimmedText))[m
+[32m+[m[32m            throw new DomainException("Text is required.");[m
+[32m+[m
+[32m+[m[32m        if (trimmedText.Length > 1000)[m
+[32m+[m[32m            throw new DomainException("Text must be 1000 characters or fewer.");[m
+[32m+[m
+[32m+[m[32m        return new Quote[m
+[32m+[m[32m        
