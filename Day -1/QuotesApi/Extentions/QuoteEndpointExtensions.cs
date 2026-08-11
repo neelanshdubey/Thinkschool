@@ -1,5 +1,6 @@
 using QuotesApi.Models;
 using QuotesApi.Repositories;
+using QuotesApi.Services;
 
 namespace QuotesApi.Extensions;
 
@@ -34,28 +35,24 @@ public static class QuoteEndpointExtensions
         app.MapPost("/api/quotes", async (
             CreateQuoteRequest request,
             IQuoteRepository repository,
+            IQuoteValidator validator,
+            IClock clock,
             CancellationToken cancellationToken) =>
         {
-            if (string.IsNullOrWhiteSpace(request.Author) ||
-                string.IsNullOrWhiteSpace(request.Text))
-            {
-                return Results.ValidationProblem(
-                    new Dictionary<string, string[]>
-                    {
-                        ["author"] = string.IsNullOrWhiteSpace(request.Author)
-                            ? ["Author is required."]
-                            : [],
+            var errors = validator.Validate(
+                request.Author,
+                request.Text);
 
-                        ["text"] = string.IsNullOrWhiteSpace(request.Text)
-                            ? ["Text is required."]
-                            : []
-                    });
+            if (errors.Count > 0)
+            {
+                return Results.ValidationProblem(errors);
             }
 
             var quote = new Quote
             {
                 Author = request.Author.Trim(),
-                Text = request.Text.Trim()
+                Text = request.Text.Trim(),
+                CreatedAt = clock.UtcNow
             };
 
             var created = await repository.AddAsync(

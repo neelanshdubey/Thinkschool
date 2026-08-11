@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using QuotesApi.Data;
 using QuotesApi.Repositories;
+using QuotesApi.Services;
 
 namespace QuotesApi.Extensions;
 
@@ -13,6 +14,8 @@ public static class InfrastructureExtensions
             options.UseSqlite("Data Source=quotes.db"));
 
         services.AddScoped<IQuoteRepository, QuoteRepository>();
+        services.AddSingleton<IClock, SystemClock>();
+        services.AddTransient<IQuoteValidator, QuoteValidator>();
 
         return services;
     }
@@ -25,7 +28,6 @@ public static class InfrastructureExtensions
         var dbContext = scope.ServiceProvider
             .GetRequiredService<AppDbContext>();
 
-        // 👇 YE LINE YAHAN AAYEGI
         dbContext.Database.Migrate();
 
         return app;
