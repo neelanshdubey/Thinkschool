@@ -13,4 +13,6 @@ public class AppDbContext : DbContext
     public DbSet<Quote> Quotes => Set<Quote>();
 
     public DbSet<User> Users => Set<User>();
+
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 }

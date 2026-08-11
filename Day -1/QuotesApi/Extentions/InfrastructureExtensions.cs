@@ -23,6 +23,7 @@ public static class InfrastructureExtensions
         services.AddSingleton<IClock, SystemClock>();
         services.AddTransient<IQuoteValidator, QuoteValidator>();
         services.AddSingleton<ITokenService, TokenService>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
         var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();
         var keyBytes = Encoding.UTF8.GetBytes(jwtSettings.Key ?? string.Empty);

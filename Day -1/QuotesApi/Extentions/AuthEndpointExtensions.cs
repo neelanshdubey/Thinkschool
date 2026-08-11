@@ -12,7 +12,8 @@ public static class AuthEndpointExtensions
         app.MapPost("/api/auth/login", async (
             LoginRequest request,
             AppDbContext dbContext,
-            ITokenService tokenService) =>
+            ITokenService tokenService,
+            IRefreshTokenService refreshTokenService) =>
         {
             var user = await dbContext.Users
                 .SingleOrDefaultAsync(u => u.Email == request.Email);
@@ -23,14 +24,29 @@ public static class AuthEndpointExtensions
             }
 
             var accessToken = tokenService.CreateAccessToken(user);
-            var refreshToken = tokenService.CreateRefreshToken();
+            var refreshToken = await refreshTokenService.CreateRefreshTokenAsync(user);
 
-            return Results.Ok(new LoginResponse
+            return Results.Ok(new TokenResponse
             {
                 AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                ExpiresIn = int.Parse(app.Configuration["Jwt:ExpiresIn"] ?? "3600")
+                RefreshToken = refreshToken
             });
+        });
+
+        app.MapPost("/api/auth/refresh", async (
+            RefreshRequest request,
+            IRefreshTokenService refreshTokenService) =>
+        {
+            var response = await refreshTokenService.RefreshAsync(request.RefreshToken);
+            return response is null ? Results.Unauthorized() : Results.Ok(response);
+        });
+
+        app.MapPost("/api/auth/logout", async (
+            LogoutRequest request,
+            IRefreshTokenService refreshTokenService) =>
+        {
+            var revoked = await refreshTokenService.RevokeAsync(request.RefreshToken);
+            return revoked ? Results.NoContent() : Results.Unauthorized();
         });
 
         return app;

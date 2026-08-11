@@ -18,6 +18,8 @@ public class TokenService : ITokenService
         _jwtSettings = _configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();
     }
 
+    public int RefreshTokenValidityInDays => 7;
+
     public string CreateAccessToken(User user)
     {
         var keyBytes = Encoding.UTF8.GetBytes(_jwtSettings.Key!);
@@ -45,8 +47,16 @@ public class TokenService : ITokenService
 
     public string CreateRefreshToken()
     {
-        var randomBytes = new byte[32];
+        var randomBytes = new byte[64];
         RandomNumberGenerator.Fill(randomBytes);
         return Convert.ToBase64String(randomBytes);
+    }
+
+    public string HashRefreshToken(string refreshToken)
+    {
+        using var sha = SHA256.Create();
+        var tokenBytes = Encoding.UTF8.GetBytes(refreshToken);
+        var hashBytes = sha.ComputeHash(tokenBytes);
+        return Convert.ToBase64String(hashBytes);
     }
 }

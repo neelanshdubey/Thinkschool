@@ -11,7 +11,10 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.ApplyMigrations();
+if (!app.Environment.IsEnvironment("Testing"))
+{
+    app.ApplyMigrations();
+}
 
 app.MapGet("/", () => "Quotes API is running!");
 
