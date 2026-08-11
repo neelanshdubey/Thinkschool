@@ -8,4 +8,3 @@ public class Customer
 
     public ICollection<Order> Orders { get; set; } = new List<Order>();
 }
-

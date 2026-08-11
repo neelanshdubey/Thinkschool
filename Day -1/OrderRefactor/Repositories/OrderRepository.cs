@@ -1,14 +1,15 @@
+
+using Microsoft.EntityFrameworkCore;
 using OrderRefactor.Data;
 using OrderRefactor.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace OrderRefactor.Repositories;
 
 public class OrderRepository : IOrderRepository
 {
-    private readonly AppDbContext _db;
+    private readonly OrderDbContext _db;
 
-    public OrderRepository(AppDbContext db)
+    public OrderRepository(OrderDbContext db)
     {
         _db = db;
     }
@@ -19,7 +20,9 @@ public class OrderRepository : IOrderRepository
     {
         return await _db.Orders
             .Include(o => o.Items)
-            .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(
+                o => o.Id == id,
+                cancellationToken);
     }
 
     public async Task AddAsync(
@@ -35,4 +38,3 @@ public class OrderRepository : IOrderRepository
         await _db.SaveChangesAsync(cancellationToken);
     }
 }
-

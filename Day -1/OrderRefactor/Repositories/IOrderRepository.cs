@@ -15,4 +15,3 @@ public interface IOrderRepository
     Task SaveChangesAsync(
         CancellationToken cancellationToken);
 }
-
