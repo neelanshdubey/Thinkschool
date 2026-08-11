@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Collections.Domain\Collections.Domain.csproj" />
+    <ProjectReference Include="..\..\Day -1\QuotesApi\QuotesApi.csproj" />
   </ItemGroup>
 
 </Project>
