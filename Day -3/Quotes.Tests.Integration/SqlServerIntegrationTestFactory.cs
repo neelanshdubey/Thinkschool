@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using QuotesApi.Data;
@@ -42,6 +43,17 @@ public class SqlServerIntegrationTestFactory : WebApplicationFactory<Program>
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll<DbContextOptions<AppDbContext>>();
+
+            // AddDbContext registers the options-configuring delegate via
+            // IDbContextOptionsConfiguration<TContext>, which accumulates
+            // across multiple AddDbContext calls instead of being replaced.
+            // Without removing it here, Program.cs's UseSqlite(...) call
+            // still runs alongside UseSqlServer(...) below, applying both
+            // provider extensions to the same DbContextOptions and causing
+            // EF to throw ("services for database providers ... have been
+            // registered") the moment AppDbContext is resolved.
+            services.RemoveAll<IDbContextOptionsConfiguration<AppDbContext>>();
+
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(_connectionString));
 
             services.RemoveAll<IClock>();

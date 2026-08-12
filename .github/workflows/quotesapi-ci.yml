@@ -57,6 +57,18 @@ jobs:
     # cached by the runner's local Docker daemon for the rest of that run
     # and Testcontainers reuses it across the whole test session - no
     # additional caching configuration is needed here.
+    #
+    # TESTCONTAINERS_RYUK_DISABLED avoids Testcontainers' Ryuk resource-
+    # reaper companion container, which fails fast with a
+    # ResourceReaperException on this runner (confirmed by reproducing the
+    # job in a container against Docker) well before the SQL Server image
+    # pull even begins - explaining why the job failed in ~53s instead of
+    # the minutes a real image pull takes. Ryuk's only role is to garbage-
+    # collect containers if the test process is killed uncleanly; on a
+    # GitHub-hosted runner the whole VM is destroyed after the job, so its
+    # safety net is redundant here.
+    env:
+      TESTCONTAINERS_RYUK_DISABLED: "true"
 
     steps:
       - name: Checkout
