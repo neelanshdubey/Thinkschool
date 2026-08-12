@@ -36,7 +36,6 @@ public static class QuoteEndpointExtensions
             CreateQuoteRequest request,
             IQuoteRepository repository,
             IQuoteValidator validator,
-            IClock clock,
             CancellationToken cancellationToken) =>
         {
             var errors = validator.Validate(
@@ -48,12 +47,9 @@ public static class QuoteEndpointExtensions
                 return Results.ValidationProblem(errors);
             }
 
-            var quote = new Quote
-            {
-                Author = request.Author.Trim(),
-                Text = request.Text.Trim(),
-                CreatedAt = clock.UtcNow
-            };
+            var quote = Quote.Create(
+                request.Author,
+                request.Text);
 
             var created = await repository.AddAsync(
                 quote,
@@ -62,7 +58,7 @@ public static class QuoteEndpointExtensions
             return Results.Created(
                 $"/api/quotes/{created.Id}",
                 created);
-        });
+        }).RequireAuthorization();
 
         app.MapGet("/api/quotes/{id:int}", async (
             int id,
@@ -90,7 +86,7 @@ public static class QuoteEndpointExtensions
             return deleted
                 ? Results.NoContent()
                 : Results.NotFound();
-        });
+        }).RequireAuthorization();
 
         return app;
     }

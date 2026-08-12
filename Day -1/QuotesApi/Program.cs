@@ -3,17 +3,22 @@ using QuotesApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-// 👇 YAHAN ADD KAR
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.ApplyMigrations();
+if (!app.Environment.IsEnvironment("Testing"))
+{
+    app.ApplyMigrations();
+}
 
 app.MapGet("/", () => "Quotes API is running!");
 
+app.MapAuthEndpoints();
 app.MapQuoteEndpoints();
 
 app.Run();
