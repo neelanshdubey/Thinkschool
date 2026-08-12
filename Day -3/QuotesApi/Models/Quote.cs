@@ -12,7 +12,32 @@ public class Quote
 
     public bool IsDeleted { get; private set; }
 
-    public static Quote Create(string author, string text)
+    public int OwnerId { get; set; }
+
+    public static Quote Create(string author, string text, int ownerId)
+    {
+        var (validAuthor, validText) = ValidateFields(author, text);
+
+        return new Quote
+        {
+            Author = validAuthor,
+            Text = validText,
+            OwnerId = ownerId,
+            CreatedAt = DateTimeOffset.UtcNow
+        };
+    }
+
+    public void Update(string author, string text)
+    {
+        var (validAuthor, validText) = ValidateFields(author, text);
+
+        Author = validAuthor;
+        Text = validText;
+    }
+
+    public void SoftDelete() => IsDeleted = true;
+
+    private static (string Author, string Text) ValidateFields(string? author, string? text)
     {
         var trimmedAuthor = author?.Trim() ?? string.Empty;
         var trimmedText = text?.Trim() ?? string.Empty;
@@ -29,13 +54,6 @@ public class Quote
         if (trimmedText.Length > 1000)
             throw new DomainException("Text must be 1000 characters or fewer.");
 
-        return new Quote
-        {
-            Author = trimmedAuthor,
-            Text = trimmedText,
-            CreatedAt = DateTimeOffset.UtcNow
-        };
+        return (trimmedAuthor, trimmedText);
     }
-
-    public void SoftDelete() => IsDeleted = true;
 }
