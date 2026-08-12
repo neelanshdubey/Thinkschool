@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using QuotesApi.Models;
 using QuotesApi.Repositories;
 using QuotesApi.Services;
@@ -34,6 +35,7 @@ public static class QuoteEndpointExtensions
 
         app.MapPost("/api/quotes", async (
             CreateQuoteRequest request,
+            HttpContext httpContext,
             IQuoteRepository repository,
             IQuoteValidator validator,
             CancellationToken cancellationToken) =>
@@ -47,9 +49,17 @@ public static class QuoteEndpointExtensions
                 return Results.ValidationProblem(errors);
             }
 
+            var ownerId = httpContext.User.GetUserId();
+
+            if (ownerId is null)
+            {
+                return Results.Unauthorized();
+            }
+
             var quote = Quote.Create(
                 request.Author,
-                request.Text);
+                request.Text,
+                ownerId.Value);
 
             var created = await repository.AddAsync(
                 quote,
@@ -59,6 +69,57 @@ public static class QuoteEndpointExtensions
                 $"/api/quotes/{created.Id}",
                 created);
         }).RequireAuthorization();
+
+        app.MapPut("/api/quotes/{id:int}", async (
+            int id,
+            UpdateQuoteRequest request,
+            HttpContext httpContext,
+            IQuoteRepository repository,
+            IQuoteValidator validator,
+            IAuthorizationService authorizationService,
+            CancellationToken cancellationToken) =>
+        {
+            var errors = validator.Validate(
+                request.Author,
+                request.Text);
+
+            if (errors.Count > 0)
+            {
+                return Results.ValidationProblem(errors);
+            }
+
+            var quote = await repository.GetByIdAsync(
+                id,
+                cancellationToken);
+
+            if (quote is null)
+            {
+                return Results.NotFound();
+            }
+
+            // The ownership rule is identical for edit and delete, so this
+            // reuses the "can-delete-own-quote" resource-based policy rather
+            // than duplicating a same-owner check under a second policy name.
+            var authResult = await authorizationService.AuthorizeAsync(
+                httpContext.User,
+                quote,
+                "can-delete-own-quote");
+
+            if (!authResult.Succeeded)
+            {
+                return Results.Forbid();
+            }
+
+            var updated = await repository.UpdateAsync(
+                id,
+                request.Author,
+                request.Text,
+                cancellationToken);
+
+            return updated is null
+                ? Results.NotFound()
+                : Results.Ok(updated);
+        }).RequireAuthorization("can-edit-quotes");
 
         app.MapGet("/api/quotes/{id:int}", async (
             int id,
@@ -76,9 +137,30 @@ public static class QuoteEndpointExtensions
 
         app.MapDelete("/api/quotes/{id:int}", async (
             int id,
+            HttpContext httpContext,
             IQuoteRepository repository,
+            IAuthorizationService authorizationService,
             CancellationToken cancellationToken) =>
         {
+            var quote = await repository.GetByIdAsync(
+                id,
+                cancellationToken);
+
+            if (quote is null)
+            {
+                return Results.NotFound();
+            }
+
+            var authResult = await authorizationService.AuthorizeAsync(
+                httpContext.User,
+                quote,
+                "can-delete-own-quote");
+
+            if (!authResult.Succeeded)
+            {
+                return Results.Forbid();
+            }
+
             var deleted = await repository.DeleteAsync(
                 id,
                 cancellationToken);
