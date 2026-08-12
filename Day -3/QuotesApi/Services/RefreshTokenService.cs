@@ -10,13 +10,23 @@ public class RefreshTokenService : IRefreshTokenService
 {
     private readonly AppDbContext _dbContext;
     private readonly ITokenService _tokenService;
+    private readonly IClock _clock;
 
     public RefreshTokenService(
         AppDbContext dbContext,
         ITokenService tokenService)
+        : this(dbContext, tokenService, new SystemClock())
+    {
+    }
+
+    public RefreshTokenService(
+        AppDbContext dbContext,
+        ITokenService tokenService,
+        IClock clock)
     {
         _dbContext = dbContext;
         _tokenService = tokenService;
+        _clock = clock;
     }
 
     public async Task<string> CreateRefreshTokenAsync(User user)
@@ -29,7 +39,7 @@ public class RefreshTokenService : IRefreshTokenService
         {
             Token = hashedToken,
             UserId = user.Id,
-            ExpiresAt = DateTimeOffset.UtcNow.AddDays(_tokenService.RefreshTokenValidityInDays),
+            ExpiresAt = _clock.UtcNow.AddDays(_tokenService.RefreshTokenValidityInDays),
             FamilyId = familyId
         };
 
@@ -49,7 +59,7 @@ public class RefreshTokenService : IRefreshTokenService
         if (tokenEntity is null)
             return null;
 
-        if (tokenEntity.IsExpired)
+        if (tokenEntity.ExpiresAt <= _clock.UtcNow)
             return null;
 
         if (tokenEntity.IsRevoked)
@@ -66,7 +76,7 @@ public class RefreshTokenService : IRefreshTokenService
         if (user is null)
             return null;
 
-        tokenEntity.RevokedAt = DateTimeOffset.UtcNow;
+        tokenEntity.RevokedAt = _clock.UtcNow;
 
         var newRawToken = _tokenService.CreateRefreshToken();
         var newHashedToken = _tokenService.HashRefreshToken(newRawToken);
@@ -77,7 +87,7 @@ public class RefreshTokenService : IRefreshTokenService
         {
             Token = newHashedToken,
             UserId = user.Id,
-            ExpiresAt = DateTimeOffset.UtcNow.AddDays(_tokenService.RefreshTokenValidityInDays),
+            ExpiresAt = _clock.UtcNow.AddDays(_tokenService.RefreshTokenValidityInDays),
             FamilyId = tokenEntity.FamilyId
         };
 
@@ -103,7 +113,7 @@ public class RefreshTokenService : IRefreshTokenService
         if (tokenEntity.IsRevoked)
             return false;
 
-        tokenEntity.RevokedAt = DateTimeOffset.UtcNow;
+        tokenEntity.RevokedAt = _clock.UtcNow;
         await _dbContext.SaveChangesAsync();
         return true;
     }
@@ -116,7 +126,7 @@ public class RefreshTokenService : IRefreshTokenService
 
         foreach (var token in familyTokens)
         {
-            token.RevokedAt = DateTimeOffset.UtcNow;
+            token.RevokedAt = _clock.UtcNow;
         }
 
         await _dbContext.SaveChangesAsync();
