@@ -5,11 +5,13 @@ on:
     paths:
       - "Day -3/QuotesApi/**"
       - "Day -3/QuotesApi.Tests/**"
+      - "Day -3/Quotes.Tests.Integration/**"
       - ".github/workflows/quotesapi-ci.yml"
   pull_request:
     paths:
       - "Day -3/QuotesApi/**"
       - "Day -3/QuotesApi.Tests/**"
+      - "Day -3/Quotes.Tests.Integration/**"
       - ".github/workflows/quotesapi-ci.yml"
 
 jobs:
@@ -43,3 +45,43 @@ jobs:
         with:
           name: quotesapi-test-results
           path: "Day -3/QuotesApi.Tests/TestResults/test-results.trx"
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    # ubuntu-latest GitHub-hosted runners come with Docker Engine
+    # preinstalled and running, which Testcontainers.MsSql needs to pull and
+    # start the mssql/server:2022-latest container used by the SQL-Server
+    # collection in Quotes.Tests.Integration. No extra setup step is
+    # required for Docker itself. The image pull is slow (~5 min) on the
+    # first run after a cache-less runner image update, but the layer is
+    # cached by the runner's local Docker daemon for the rest of that run
+    # and Testcontainers reuses it across the whole test session - no
+    # additional caching configuration is needed here.
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore dependencies
+        working-directory: "Day -3/Quotes.Tests.Integration"
+        run: dotnet restore
+
+      - name: Build
+        working-directory: "Day -3/Quotes.Tests.Integration"
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Run tests
+        working-directory: "Day -3/Quotes.Tests.Integration"
+        run: dotnet test --no-build --configuration Release --logger "trx;LogFileName=integration-test-results.trx"
+
+      - name: Publish test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quotes-integration-test-results
+          path: "Day -3/Quotes.Tests.Integration/TestResults/integration-test-results.trx"

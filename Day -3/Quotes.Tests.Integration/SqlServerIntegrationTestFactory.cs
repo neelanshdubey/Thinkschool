@@ -1,0 +1,58 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using QuotesApi.Data;
+using QuotesApi.Services;
+
+namespace Quotes.Tests.Integration;
+
+// Mirrors IntegrationTestFactory but points AppDbContext at a real SQL
+// Server database (a uniquely-named database on the shared container from
+// SqlServerContainerFixture) instead of an in-memory SQLite connection.
+//
+// Schema is applied via EnsureCreated() from the current model snapshot,
+// not Database.Migrate() - the existing EF migrations under
+// QuotesApi/Migrations were scaffolded against the SQLite provider and bake
+// in SQLite-specific column types ("INTEGER"/"TEXT") and a
+// "Sqlite:Autoincrement" annotation that the SQL Server provider ignores.
+// Running them as-is would create tables whose primary-key columns lack
+// IDENTITY, so the first insert relying on ValueGeneratedOnAdd would fail.
+// This means SQL Server migration-script correctness itself is NOT
+// exercised by this suite - only runtime query/business-logic behavior
+// against a real SQL Server engine is. See the report for the full
+// tradeoff discussion.
+public class SqlServerIntegrationTestFactory : WebApplicationFactory<Program>
+{
+    private readonly string _connectionString;
+
+    public FakeClock Clock { get; } = new();
+
+    public SqlServerIntegrationTestFactory(string connectionString)
+    {
+        _connectionString = connectionString;
+    }
+
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.UseEnvironment("Testing");
+
+        builder.ConfigureTestServices(services =>
+        {
+            services.RemoveAll<DbContextOptions<AppDbContext>>();
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(_connectionString));
+
+            services.RemoveAll<IClock>();
+            services.AddSingleton<IClock>(Clock);
+        });
+    }
+
+    public async Task InitializeDatabaseAsync()
+    {
+        using var scope = Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
+    }
+}
