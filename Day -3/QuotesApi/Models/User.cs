@@ -1,5 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace QuotesApi.Models;
 
+[Index(nameof(Email), IsUnique = true)]
 public class User
 {
     public int Id { get; set; }

@@ -1,8 +1,7 @@
-using System;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using QuotesApi.Data;
 using QuotesApi.Models;
 using QuotesApi.Repositories;
@@ -16,8 +15,21 @@ public static class InfrastructureExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        var jwtSettings = configuration
+            .GetSection("Jwt")
+            .Get<JwtSettings>()
+            ?? throw new InvalidOperationException("Jwt settings are missing.");
+
+        var entraSettings = configuration
+            .GetSection("Entra")
+            .Get<EntraSettings>()
+            ?? throw new InvalidOperationException("Entra settings are missing.");
+
+        var keyBytes = Encoding.UTF8.GetBytes(jwtSettings.Key!);
+
         services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlite("Data Source=quotes.db"));
+            options.UseSqlite(
+              configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IQuoteRepository, QuoteRepository>();
         services.AddSingleton<IClock, SystemClock>();
@@ -25,15 +37,40 @@ public static class InfrastructureExtensions
         services.AddSingleton<ITokenService, TokenService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
-        var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();
-        var keyBytes = Encoding.UTF8.GetBytes(jwtSettings.Key ?? string.Empty);
+        services.AddSingleton(jwtSettings);
+        services.AddSingleton(entraSettings);
 
         services.AddAuthentication(options =>
         {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultAuthenticateScheme = "Bearer";
+            options.DefaultChallengeScheme = "Bearer";
         })
-        .AddJwtBearer(options =>
+        .AddPolicyScheme("Bearer", "InternalJwt or EntraJwt", options =>
+        {
+            options.ForwardDefaultSelector = context =>
+            {
+                var authHeader = context.Request.Headers.Authorization.ToString();
+
+                if (authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                {
+                    var token = authHeader["Bearer ".Length..].Trim();
+                    var handler = new JwtSecurityTokenHandler();
+
+                    if (handler.CanReadToken(token))
+                    {
+                        var issuer = handler.ReadJwtToken(token).Issuer;
+
+                        if (issuer.Contains("login.microsoftonline.com", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return "EntraJwt";
+                        }
+                    }
+                }
+
+                return "InternalJwt";
+            };
+        })
+        .AddJwtBearer("InternalJwt", options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -41,11 +78,32 @@ public static class InfrastructureExtensions
                 ValidateAudience = true,
                 ValidateIssuerSigningKey = true,
                 ValidateLifetime = true,
+
                 ValidIssuer = jwtSettings.Issuer,
                 ValidAudience = jwtSettings.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(keyBytes),
+
                 ClockSkew = TimeSpan.Zero
             };
+        })
+        .AddJwtBearer("EntraJwt", options =>
+        {
+            options.Authority =
+                $"https://login.microsoftonline.com/{entraSettings.TenantId}/v2.0";
+
+            options.TokenValidationParameters =
+                new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+
+                    ValidAudience = entraSettings.Audience,
+
+                    ClockSkew = TimeSpan.Zero
+                };
         });
 
         services.AddAuthorization();
@@ -53,8 +111,7 @@ public static class InfrastructureExtensions
         return services;
     }
 
-    public static WebApplication ApplyMigrations(
-        this WebApplication app)
+    public static void ApplyMigrations(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
 
@@ -63,8 +120,6 @@ public static class InfrastructureExtensions
 
         dbContext.Database.Migrate();
         SeedUsers(dbContext);
-
-        return app;
     }
 
     private static void SeedUsers(AppDbContext dbContext)
@@ -78,6 +133,14 @@ public static class InfrastructureExtensions
             PasswordHash = BCryptNet.BCrypt.HashPassword(UserSeed.Password)
         });
 
-        dbContext.SaveChanges();
+        try
+        {
+            dbContext.SaveChanges();
+        }
+        catch (DbUpdateException)
+        {
+            // Another instance seeded the same user concurrently; the unique
+            // index on Email already guarantees at most one row exists.
+        }
     }
 }
