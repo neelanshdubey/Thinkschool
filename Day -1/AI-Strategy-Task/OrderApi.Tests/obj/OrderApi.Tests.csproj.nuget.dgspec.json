@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj": {}
+    "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj": {}
   },
   "projects": {
-    "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj": {
+    "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",
+        "projectUniqueName": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",
         "projectName": "OrderApi.Tests",
-        "projectPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",
+        "projectPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\OrderApi.Tests.csproj",
         "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\obj\\",
+        "outputPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -27,8 +27,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj": {
-                "projectPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj"
+              "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj": {
+                "projectPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj"
               }
             }
           }
@@ -361,14 +361,14 @@
         }
       }
     },
-    "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj": {
+    "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj",
+        "projectUniqueName": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj",
         "projectName": "OrderApi",
-        "projectPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj",
+        "projectPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\OrderApi.csproj",
         "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\obj\\",
+        "outputPath": "C:\\Users\\HP\\OneDrive\\Desktop\\thinkschool\\Day -1\\AI-Strategy-Task\\OrderApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\HP\\AppData\\Roaming\\NuGet\\NuGet.Config"
