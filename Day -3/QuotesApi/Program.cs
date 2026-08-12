@@ -1,9 +1,22 @@
+using Microsoft.AspNetCore.Authorization;
+using QuotesApi.Authorization;
 using QuotesApi.Extensions;
 using QuotesApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddSingleton<IAuthorizationHandler, SameOwnerAuthorizationHandler>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("can-edit-quotes", policy =>
+        policy.RequireClaim("scope", "quotes.write"));
+
+    options.AddPolicy("can-delete-own-quote", policy =>
+        policy.Requirements.Add(new SameOwnerRequirement()));
+});
 
 var app = builder.Build();
 
