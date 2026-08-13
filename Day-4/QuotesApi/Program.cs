@@ -2,8 +2,15 @@ using Microsoft.AspNetCore.Authorization;
 using QuotesApi.Authorization;
 using QuotesApi.Extensions;
 using QuotesApi.Middleware;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, services, loggerConfig) =>
+    loggerConfig
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext());
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -19,6 +26,16 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
+
+app.Use((context, next) =>
+{
+    using (Serilog.Context.LogContext.PushProperty("TraceId", context.TraceIdentifier))
+    {
+        return next();
+    }
+});
+
+app.UseSerilogRequestLogging();
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
