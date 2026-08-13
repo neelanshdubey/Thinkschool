@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace QuotesApi.Models;
 
 public class RefreshToken
@@ -12,6 +14,7 @@ public class RefreshToken
 
     public DateTimeOffset ExpiresAt { get; set; }
 
+    [ConcurrencyCheck]
     public DateTimeOffset? RevokedAt { get; set; }
 
     public string? ReplacedByToken { get; set; }

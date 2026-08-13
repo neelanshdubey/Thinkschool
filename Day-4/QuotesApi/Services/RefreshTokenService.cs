@@ -92,7 +92,18 @@ public class RefreshTokenService : IRefreshTokenService
         };
 
         _dbContext.RefreshTokens.Add(newRefreshToken);
-        await _dbContext.SaveChangesAsync();
+
+        try
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // Another concurrent request already rotated this token between our read
+            // and this write (RevokedAt is a concurrency token) — treat this request
+            // the same as any other reuse of an already-rotated token.
+            return null;
+        }
 
         return new TokenResponse
         {
