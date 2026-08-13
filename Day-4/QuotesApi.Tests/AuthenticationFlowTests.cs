@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using QuotesApi.Data;
 using QuotesApi.Models;
@@ -88,8 +89,9 @@ public class AuthenticationFlowTests : IClassFixture<RealAuthQuotesApiFactory>, 
     {
         using var scope = _factory.Services.CreateScope();
         var jwtSettings = scope.ServiceProvider.GetRequiredService<JwtSettings>();
+        var jwtOptions = scope.ServiceProvider.GetRequiredService<IOptions<JwtOptions>>().Value;
 
-        var keyBytes = Encoding.UTF8.GetBytes(jwtSettings.Key!);
+        var keyBytes = Encoding.UTF8.GetBytes(jwtSettings.SigningKey!);
         var signingKey = new SymmetricSecurityKey(keyBytes);
         var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
@@ -101,7 +103,7 @@ public class AuthenticationFlowTests : IClassFixture<RealAuthQuotesApiFactory>, 
 
         var token = new JwtSecurityToken(
             issuer: jwtSettings.Issuer,
-            audience: jwtSettings.Audience,
+            audience: jwtOptions.Audience,
             claims: claims,
             notBefore: DateTime.UtcNow.AddMinutes(-10),
             expires: DateTime.UtcNow.AddMinutes(-5),
@@ -187,6 +189,46 @@ public class AuthenticationFlowTests : IClassFixture<RealAuthQuotesApiFactory>, 
             new RefreshRequest { RefreshToken = tokens.RefreshToken });
 
         Assert.Equal(HttpStatusCode.Unauthorized, reuseResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task Refresh_ConcurrentDuplicateCallsWithSameToken_Diagnostic()
+    {
+        var tokens = await LoginAsync(UserSeed.Email, UserSeed.Password);
+        var tokenA = tokens.RefreshToken;
+
+        var call1 = _client.PostAsJsonAsync("/api/auth/refresh", new RefreshRequest { RefreshToken = tokenA });
+        var call2 = _client.PostAsJsonAsync("/api/auth/refresh", new RefreshRequest { RefreshToken = tokenA });
+        var results = await Task.WhenAll(call1, call2);
+
+        var statusCodes = results.Select(r => r.StatusCode).ToList();
+        var bodies = new List<string>();
+        foreach (var r in results)
+        {
+            bodies.Add(await r.Content.ReadAsStringAsync());
+        }
+
+        throw new Exception(
+            $"status1={statusCodes[0]} body1={bodies[0]} | status2={statusCodes[1]} body2={bodies[1]}");
+    }
+
+    [Fact]
+    public async Task Refresh_ReproSecondRotation_CheckIfBWorks()
+    {
+        var tokens = await LoginAsync(UserSeed.Email, UserSeed.Password);
+        var tokenA = tokens.RefreshToken;
+
+        var refreshAResponse = await _client.PostAsJsonAsync(
+            "/api/auth/refresh",
+            new RefreshRequest { RefreshToken = tokenA });
+        refreshAResponse.EnsureSuccessStatusCode();
+        var tokenB = (await refreshAResponse.Content.ReadFromJsonAsync<TokenResponse>())!.RefreshToken;
+
+        var refreshBResponse = await _client.PostAsJsonAsync(
+            "/api/auth/refresh",
+            new RefreshRequest { RefreshToken = tokenB });
+
+        Assert.Equal(HttpStatusCode.OK, refreshBResponse.StatusCode);
     }
 
     [Fact]
