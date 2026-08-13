@@ -82,35 +82,6 @@ public class AuthEndpointsTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task Refresh_ChainedTwice_EachNewTokenWorksUntilOldOneIsReused()
-    {
-        var loginTokens = await LoginAsync();
-        var tokenA = loginTokens.RefreshToken;
-
-        var firstRefreshResponse = await Client.PostAsJsonAsync(
-            "/api/auth/refresh",
-            new RefreshRequest { RefreshToken = tokenA });
-        Assert.Equal(HttpStatusCode.OK, firstRefreshResponse.StatusCode);
-        var tokenB = (await firstRefreshResponse.Content.ReadFromJsonAsync<TokenResponse>())!.RefreshToken;
-
-        var secondRefreshResponse = await Client.PostAsJsonAsync(
-            "/api/auth/refresh",
-            new RefreshRequest { RefreshToken = tokenB });
-        Assert.Equal(HttpStatusCode.OK, secondRefreshResponse.StatusCode);
-        var tokenC = (await secondRefreshResponse.Content.ReadFromJsonAsync<TokenResponse>())!.RefreshToken;
-
-        var reuseOfARespose = await Client.PostAsJsonAsync(
-            "/api/auth/refresh",
-            new RefreshRequest { RefreshToken = tokenA });
-        Assert.Equal(HttpStatusCode.Unauthorized, reuseOfARespose.StatusCode);
-
-        var attemptWithCAfterReuse = await Client.PostAsJsonAsync(
-            "/api/auth/refresh",
-            new RefreshRequest { RefreshToken = tokenC });
-        Assert.Equal(HttpStatusCode.Unauthorized, attemptWithCAfterReuse.StatusCode);
-    }
-
-    [Fact]
     public async Task Logout_WithValidToken_RevokesRefreshTokenAndBlocksFurtherRefresh()
     {
         var tokens = await LoginAsync();

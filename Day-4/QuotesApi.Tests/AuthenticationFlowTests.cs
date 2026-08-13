@@ -192,46 +192,6 @@ public class AuthenticationFlowTests : IClassFixture<RealAuthQuotesApiFactory>, 
     }
 
     [Fact]
-    public async Task Refresh_ConcurrentDuplicateCallsWithSameToken_Diagnostic()
-    {
-        var tokens = await LoginAsync(UserSeed.Email, UserSeed.Password);
-        var tokenA = tokens.RefreshToken;
-
-        var call1 = _client.PostAsJsonAsync("/api/auth/refresh", new RefreshRequest { RefreshToken = tokenA });
-        var call2 = _client.PostAsJsonAsync("/api/auth/refresh", new RefreshRequest { RefreshToken = tokenA });
-        var results = await Task.WhenAll(call1, call2);
-
-        var statusCodes = results.Select(r => r.StatusCode).ToList();
-        var bodies = new List<string>();
-        foreach (var r in results)
-        {
-            bodies.Add(await r.Content.ReadAsStringAsync());
-        }
-
-        throw new Exception(
-            $"status1={statusCodes[0]} body1={bodies[0]} | status2={statusCodes[1]} body2={bodies[1]}");
-    }
-
-    [Fact]
-    public async Task Refresh_ReproSecondRotation_CheckIfBWorks()
-    {
-        var tokens = await LoginAsync(UserSeed.Email, UserSeed.Password);
-        var tokenA = tokens.RefreshToken;
-
-        var refreshAResponse = await _client.PostAsJsonAsync(
-            "/api/auth/refresh",
-            new RefreshRequest { RefreshToken = tokenA });
-        refreshAResponse.EnsureSuccessStatusCode();
-        var tokenB = (await refreshAResponse.Content.ReadFromJsonAsync<TokenResponse>())!.RefreshToken;
-
-        var refreshBResponse = await _client.PostAsJsonAsync(
-            "/api/auth/refresh",
-            new RefreshRequest { RefreshToken = tokenB });
-
-        Assert.Equal(HttpStatusCode.OK, refreshBResponse.StatusCode);
-    }
-
-    [Fact]
     public async Task Refresh_WithTokenRevokedViaLogout_ReturnsUnauthorized()
     {
         var tokens = await LoginAsync(UserSeed.Email, UserSeed.Password);
