@@ -13,18 +13,22 @@ public static class AuthEndpointExtensions
             LoginRequest request,
             AppDbContext dbContext,
             ITokenService tokenService,
-            IRefreshTokenService refreshTokenService) =>
+            IRefreshTokenService refreshTokenService,
+            ILogger<Program> logger) =>
         {
             var user = await dbContext.Users
                 .SingleOrDefaultAsync(u => u.Email == request.Email);
 
             if (user is null || !BCryptNet.BCrypt.Verify(request.Password, user.PasswordHash))
             {
+                logger.LogWarning("Login failed for email {Email}", request.Email);
                 return Results.Unauthorized();
             }
 
             var accessToken = tokenService.CreateAccessToken(user);
             var refreshToken = await refreshTokenService.CreateRefreshTokenAsync(user);
+
+            logger.LogInformation("Login succeeded for user {UserId}", user.Id);
 
             return Results.Ok(new TokenResponse
             {
@@ -35,18 +39,36 @@ public static class AuthEndpointExtensions
 
         app.MapPost("/api/auth/refresh", async (
             RefreshRequest request,
-            IRefreshTokenService refreshTokenService) =>
+            IRefreshTokenService refreshTokenService,
+            ILogger<Program> logger) =>
         {
             var response = await refreshTokenService.RefreshAsync(request.RefreshToken);
-            return response is null ? Results.Unauthorized() : Results.Ok(response);
+
+            if (response is null)
+            {
+                logger.LogWarning("Refresh token rotation failed: token invalid, expired, or reused");
+                return Results.Unauthorized();
+            }
+
+            logger.LogInformation("Refresh token rotated successfully");
+            return Results.Ok(response);
         });
 
         app.MapPost("/api/auth/logout", async (
             LogoutRequest request,
-            IRefreshTokenService refreshTokenService) =>
+            IRefreshTokenService refreshTokenService,
+            ILogger<Program> logger) =>
         {
             var revoked = await refreshTokenService.RevokeAsync(request.RefreshToken);
-            return revoked ? Results.NoContent() : Results.Unauthorized();
+
+            if (!revoked)
+            {
+                logger.LogWarning("Logout failed: refresh token invalid or already revoked");
+                return Results.Unauthorized();
+            }
+
+            logger.LogInformation("Logout succeeded, refresh token revoked");
+            return Results.NoContent();
         });
 
         return app;
