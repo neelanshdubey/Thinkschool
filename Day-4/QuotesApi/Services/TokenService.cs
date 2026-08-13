@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using QuotesApi.Models;
 
@@ -9,21 +10,24 @@ namespace QuotesApi.Services;
 
 public class TokenService : ITokenService
 {
-    private readonly IConfiguration _configuration;
     private readonly JwtSettings _jwtSettings;
+    private readonly IOptions<JwtOptions> _jwtOptions;
 
-    public TokenService(IConfiguration configuration)
+    // TokenService is a singleton, so IOptions<JwtOptions> is resolved once
+    // and cached for the app's lifetime — a config reload won't be picked up
+    // without a restart. Contrast with the IOptionsSnapshot<JwtOptions> usage
+    // in AuthEndpointExtensions, which re-reads per request.
+    public TokenService(JwtSettings jwtSettings, IOptions<JwtOptions> jwtOptions)
     {
-        _configuration = configuration;
-        _jwtSettings = _configuration.GetSection("Jwt").Get<JwtSettings>()
-            ?? throw new InvalidOperationException("Jwt settings are missing.");
+        _jwtSettings = jwtSettings;
+        _jwtOptions = jwtOptions;
     }
 
     public int RefreshTokenValidityInDays => 7;
 
     public string CreateAccessToken(User user)
     {
-        var keyBytes = Encoding.UTF8.GetBytes(_jwtSettings.Key!);
+        var keyBytes = Encoding.UTF8.GetBytes(_jwtSettings.SigningKey!);
         var signingKey = new SymmetricSecurityKey(keyBytes);
         var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
@@ -35,11 +39,11 @@ public class TokenService : ITokenService
             new Claim("scope", "quotes.write")
         };
 
-        var expires = DateTime.UtcNow.AddSeconds(_jwtSettings.ExpiresIn);
+        var expires = DateTime.UtcNow.Add(_jwtOptions.Value.AccessTokenLifetime);
 
         var token = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
-            audience: _jwtSettings.Audience,
+            audience: _jwtOptions.Value.Audience,
             claims: claims,
             expires: expires,
             signingCredentials: credentials);

@@ -13,6 +13,17 @@ public class QuotesApiFactory : WebApplicationFactory<Program>
     public string DbPath { get; } =
         Path.Combine(Path.GetTempPath(), $"quotesapi_tests_{Guid.NewGuid():N}.db");
 
+    public QuotesApiFactory()
+    {
+        // Jwt:SigningKey is intentionally absent from appsettings.json (see
+        // JwtSettings.cs); Program.cs reads it eagerly in AddInfrastructure,
+        // before this factory's config overrides become visible, so it must
+        // be supplied as an env var instead. Auth is stubbed via
+        // TestAuthHandler below, but AddInfrastructure still runs regardless.
+        Environment.SetEnvironmentVariable(
+            "Jwt__SigningKey", "test-only-signing-key-not-for-production-1234567890");
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");

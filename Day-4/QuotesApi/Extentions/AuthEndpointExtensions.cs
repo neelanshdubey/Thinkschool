@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using QuotesApi.Data;
 using QuotesApi.Diagnostics;
 using QuotesApi.Models;
@@ -15,6 +16,7 @@ public static class AuthEndpointExtensions
             AppDbContext dbContext,
             ITokenService tokenService,
             IRefreshTokenService refreshTokenService,
+            IOptionsSnapshot<JwtOptions> jwtOptions,
             ILogger<Program> logger) =>
         {
             var user = await dbContext.Users
@@ -29,7 +31,11 @@ public static class AuthEndpointExtensions
             var accessToken = tokenService.CreateAccessToken(user);
             var refreshToken = await refreshTokenService.CreateRefreshTokenAsync(user);
 
-            logger.LogInformation("Login succeeded for user {UserId}", user.Id);
+            // IOptionsSnapshot<JwtOptions> is resolved fresh from this request's
+            // DI scope, unlike TokenService's IOptions<JwtOptions> singleton above.
+            logger.LogInformation(
+                "Login succeeded for user {UserId}; issuing token for audience {Audience} (ttl {Lifetime})",
+                user.Id, jwtOptions.Value.Audience, jwtOptions.Value.AccessTokenLifetime);
 
             return Results.Ok(new TokenResponse
             {

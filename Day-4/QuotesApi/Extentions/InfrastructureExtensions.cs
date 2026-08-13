@@ -20,12 +20,17 @@ public static class InfrastructureExtensions
             .Get<JwtSettings>()
             ?? throw new InvalidOperationException("Jwt settings are missing.");
 
+        var jwtOptions = configuration
+            .GetSection("Jwt")
+            .Get<JwtOptions>()
+            ?? throw new InvalidOperationException("Jwt settings are missing.");
+
         var entraSettings = configuration
             .GetSection("Entra")
             .Get<EntraSettings>()
             ?? throw new InvalidOperationException("Entra settings are missing.");
 
-        var keyBytes = Encoding.UTF8.GetBytes(jwtSettings.Key!);
+        var keyBytes = Encoding.UTF8.GetBytes(jwtSettings.SigningKey!);
 
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlite(
@@ -39,6 +44,11 @@ public static class InfrastructureExtensions
 
         services.AddSingleton(jwtSettings);
         services.AddSingleton(entraSettings);
+
+        // Typed options for consumers that resolve JwtOptions via DI
+        // (IOptions<T> / IOptionsSnapshot<T>) — see TokenService and
+        // AuthEndpointExtensions for the two usages.
+        services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
 
         services.AddAuthentication(options =>
         {
@@ -80,7 +90,7 @@ public static class InfrastructureExtensions
                 ValidateLifetime = true,
 
                 ValidIssuer = jwtSettings.Issuer,
-                ValidAudience = jwtSettings.Audience,
+                ValidAudience = jwtOptions.Audience,
 
                 IssuerSigningKey =
                     new SymmetricSecurityKey(keyBytes),
