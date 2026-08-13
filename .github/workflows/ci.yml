@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  ci-build-and-test:
     runs-on: ubuntu-latest
 
     steps:
