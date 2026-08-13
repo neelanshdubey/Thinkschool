@@ -1,6 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using FluentAssertions;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using QuotesApi.Models;
 using QuotesApi.Services;
 
@@ -8,27 +8,24 @@ namespace Quotes.Tests.Unit;
 
 public class TokenServiceTests
 {
-    private static IConfiguration BuildConfiguration(int expiresInSeconds = 3600)
+    private static JwtSettings BuildJwtSettings() => new()
     {
-        var settings = new Dictionary<string, string?>
-        {
-            ["Jwt:Issuer"] = "test-issuer",
-            ["Jwt:Audience"] = "test-audience",
-            ["Jwt:Key"] = "this-is-a-sufficiently-long-test-signing-key-1234567890",
-            ["Jwt:ExpiresIn"] = expiresInSeconds.ToString()
-        };
+        Issuer = "test-issuer",
+        SigningKey = "this-is-a-sufficiently-long-test-signing-key-1234567890"
+    };
 
-        return new ConfigurationBuilder()
-            .AddInMemoryCollection(settings)
-            .Build();
-    }
+    private static IOptions<JwtOptions> BuildJwtOptions(int expiresInSeconds = 3600) =>
+        Options.Create(new JwtOptions
+        {
+            Audience = "test-audience",
+            AccessTokenLifetime = TimeSpan.FromSeconds(expiresInSeconds)
+        });
 
     [Fact]
     public void CreateAccessToken_ValidUser_ReturnsTokenWithExpectedClaims()
     {
         // Arrange
-        var configuration = BuildConfiguration();
-        var tokenService = new TokenService(configuration);
+        var tokenService = new TokenService(BuildJwtSettings(), BuildJwtOptions());
         var user = new User { Id = 7, Email = "reader@example.com", PasswordHash = "hash" };
 
         // Act
@@ -47,8 +44,7 @@ public class TokenServiceTests
     public void CreateAccessToken_ValidUser_SetsExpiryBasedOnConfiguredExpiresIn()
     {
         // Arrange
-        var configuration = BuildConfiguration(expiresInSeconds: 120);
-        var tokenService = new TokenService(configuration);
+        var tokenService = new TokenService(BuildJwtSettings(), BuildJwtOptions(expiresInSeconds: 120));
         var user = new User { Id = 1, Email = "reader@example.com", PasswordHash = "hash" };
         var before = DateTime.UtcNow;
 
@@ -65,8 +61,7 @@ public class TokenServiceTests
     public void CreateAccessToken_TwoDifferentUsers_ProducesDifferentTokens()
     {
         // Arrange
-        var configuration = BuildConfiguration();
-        var tokenService = new TokenService(configuration);
+        var tokenService = new TokenService(BuildJwtSettings(), BuildJwtOptions());
         var userA = new User { Id = 1, Email = "a@example.com", PasswordHash = "hash" };
         var userB = new User { Id = 2, Email = "b@example.com", PasswordHash = "hash" };
 
@@ -82,8 +77,7 @@ public class TokenServiceTests
     public void CreateRefreshToken_ReturnsNonEmptyBase64String()
     {
         // Arrange
-        var configuration = BuildConfiguration();
-        var tokenService = new TokenService(configuration);
+        var tokenService = new TokenService(BuildJwtSettings(), BuildJwtOptions());
 
         // Act
         var refreshToken = tokenService.CreateRefreshToken();
@@ -98,8 +92,7 @@ public class TokenServiceTests
     public void CreateRefreshToken_CalledTwice_ReturnsDifferentValues()
     {
         // Arrange
-        var configuration = BuildConfiguration();
-        var tokenService = new TokenService(configuration);
+        var tokenService = new TokenService(BuildJwtSettings(), BuildJwtOptions());
 
         // Act
         var first = tokenService.CreateRefreshToken();
@@ -113,8 +106,7 @@ public class TokenServiceTests
     public void HashRefreshToken_SameInput_ReturnsSameHash()
     {
         // Arrange
-        var configuration = BuildConfiguration();
-        var tokenService = new TokenService(configuration);
+        var tokenService = new TokenService(BuildJwtSettings(), BuildJwtOptions());
         var rawToken = "a-fixed-raw-refresh-token-value";
 
         // Act
@@ -129,8 +121,7 @@ public class TokenServiceTests
     public void HashRefreshToken_DifferentInputs_ReturnsDifferentHashes()
     {
         // Arrange
-        var configuration = BuildConfiguration();
-        var tokenService = new TokenService(configuration);
+        var tokenService = new TokenService(BuildJwtSettings(), BuildJwtOptions());
 
         // Act
         var hash1 = tokenService.HashRefreshToken("raw-token-one");
@@ -144,27 +135,12 @@ public class TokenServiceTests
     public void RefreshTokenValidityInDays_ReturnsSeven()
     {
         // Arrange
-        var configuration = BuildConfiguration();
-        var tokenService = new TokenService(configuration);
+        var tokenService = new TokenService(BuildJwtSettings(), BuildJwtOptions());
 
         // Act
         var validityInDays = tokenService.RefreshTokenValidityInDays;
 
         // Assert
         validityInDays.Should().Be(7);
-    }
-
-    [Fact]
-    public void Constructor_MissingJwtConfigurationSection_ThrowsInvalidOperationException()
-    {
-        // Arrange
-        var configuration = new ConfigurationBuilder().Build();
-
-        // Act
-        var act = () => new TokenService(configuration);
-
-        // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("Jwt settings are missing.");
     }
 }

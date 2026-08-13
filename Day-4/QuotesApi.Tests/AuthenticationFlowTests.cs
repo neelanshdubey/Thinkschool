@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using QuotesApi.Data;
 using QuotesApi.Models;
@@ -88,8 +89,9 @@ public class AuthenticationFlowTests : IClassFixture<RealAuthQuotesApiFactory>, 
     {
         using var scope = _factory.Services.CreateScope();
         var jwtSettings = scope.ServiceProvider.GetRequiredService<JwtSettings>();
+        var jwtOptions = scope.ServiceProvider.GetRequiredService<IOptions<JwtOptions>>().Value;
 
-        var keyBytes = Encoding.UTF8.GetBytes(jwtSettings.Key!);
+        var keyBytes = Encoding.UTF8.GetBytes(jwtSettings.SigningKey!);
         var signingKey = new SymmetricSecurityKey(keyBytes);
         var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
@@ -101,7 +103,7 @@ public class AuthenticationFlowTests : IClassFixture<RealAuthQuotesApiFactory>, 
 
         var token = new JwtSecurityToken(
             issuer: jwtSettings.Issuer,
-            audience: jwtSettings.Audience,
+            audience: jwtOptions.Audience,
             claims: claims,
             notBefore: DateTime.UtcNow.AddMinutes(-10),
             expires: DateTime.UtcNow.AddMinutes(-5),

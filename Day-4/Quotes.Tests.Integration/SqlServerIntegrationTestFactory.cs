@@ -34,6 +34,13 @@ public class SqlServerIntegrationTestFactory : WebApplicationFactory<Program>
     public SqlServerIntegrationTestFactory(string connectionString)
     {
         _connectionString = connectionString;
+
+        // Jwt:SigningKey is intentionally absent from appsettings.json (see
+        // JwtSettings.cs); Program.cs reads it eagerly in AddInfrastructure,
+        // before this factory's config overrides become visible, so it must
+        // be supplied as an env var instead.
+        Environment.SetEnvironmentVariable(
+            "Jwt__SigningKey", "test-only-signing-key-not-for-production-1234567890");
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
