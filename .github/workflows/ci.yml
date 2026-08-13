@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci-build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore Day-4/QuotesApi.sln
+
+      - name: Build
+        run: dotnet build Day-4/QuotesApi.sln --no-restore
+
+      - name: Run tests
+        env:
+          TESTCONTAINERS_RYUK_DISABLED: "true"
+        run: >
+          dotnet test Day-4/QuotesApi.sln --no-build
+          --logger "trx;LogFileName=test-results.trx"
+          --collect:"XPlat Code Coverage"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: Day-4/**/TestResults/*.trx
+          if-no-files-found: warn
+
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: Day-4/**/TestResults/**/coverage.cobertura.xml
+          if-no-files-found: warn
+
+      - name: Install ReportGenerator
+        run: |
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+
+      - name: Merge coverage reports
+        run: |
+          reportgenerator \
+            -reports:"Day-4/**/TestResults/**/coverage.cobertura.xml" \
+            -targetdir:coverage-report \
+            -reporttypes:TextSummary
+
+      - name: Enforce coverage threshold
+        run: |
+          cat coverage-report/Summary.txt
+
+          LINE_COVERAGE=$(grep -oP 'Line coverage:\s*\K[0-9.]+' coverage-report/Summary.txt | head -1)
+
+          if [ -z "$LINE_COVERAGE" ]; then
+            echo "Could not determine overall line coverage from the merged report"
+            exit 1
+          fi
+
+          echo "Overall line coverage: ${LINE_COVERAGE}%"
+
+          BELOW_THRESHOLD=$(awk -v cov="$LINE_COVERAGE" 'BEGIN { print (cov < 70) ? "1" : "0" }')
+
+          if [ "$BELOW_THRESHOLD" = "1" ]; then
+            echo "Coverage ${LINE_COVERAGE}% is below the required 70% threshold"
+            exit 1
+          fi
+
+          echo "Coverage ${LINE_COVERAGE}% meets the required 70% threshold"

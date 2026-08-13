@@ -1,0 +1,26 @@
+namespace QuotesApi.Models;
+
+public class RefreshToken
+{
+    public int Id { get; set; }
+
+    public string Token { get; set; } = string.Empty;
+
+    public int UserId { get; set; }
+
+    public User? User { get; set; }
+
+    public DateTimeOffset ExpiresAt { get; set; }
+
+    public DateTimeOffset? RevokedAt { get; set; }
+
+    public string? ReplacedByToken { get; set; }
+
+    public string FamilyId { get; set; } = string.Empty;
+
+    public bool IsExpired => DateTimeOffset.UtcNow >= ExpiresAt;
+
+    public bool IsRevoked => RevokedAt.HasValue;
+
+    public bool IsActive => !IsExpired && !IsRevoked;
+}
