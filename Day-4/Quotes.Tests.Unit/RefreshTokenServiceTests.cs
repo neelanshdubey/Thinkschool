@@ -230,6 +230,34 @@ public class RefreshTokenServiceTests
     }
 
     [Fact]
+    public async Task RefreshAsync_TokenWithoutAssociatedUser_ReturnsNullWithoutRotating()
+    {
+        // Arrange: a token row that has outlived its user (e.g. the user was
+        // deleted out-of-band) but is itself still active and unrevoked.
+        var orphanedToken = new RefreshToken
+        {
+            Id = 1,
+            Token = "hashed:orphaned-raw-token",
+            UserId = 999,
+            User = null,
+            ExpiresAt = DateTimeOffset.UtcNow.AddDays(1),
+            FamilyId = "family-1"
+        };
+        var tokens = new List<RefreshToken> { orphanedToken };
+        var dbContext = CreateDbContext(tokens);
+        var tokenService = CreateTokenService();
+        var service = new RefreshTokenService(dbContext, tokenService);
+
+        // Act
+        var response = await service.RefreshAsync("orphaned-raw-token");
+
+        // Assert
+        response.Should().BeNull();
+        orphanedToken.RevokedAt.Should().BeNull();
+        tokens.Should().ContainSingle();
+    }
+
+    [Fact]
     public async Task RevokeAsync_ActiveToken_RevokesAndReturnsTrue()
     {
         // Arrange

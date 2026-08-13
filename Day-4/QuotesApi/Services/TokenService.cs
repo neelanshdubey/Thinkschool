@@ -15,7 +15,8 @@ public class TokenService : ITokenService
     public TokenService(IConfiguration configuration)
     {
         _configuration = configuration;
-        _jwtSettings = _configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();
+        _jwtSettings = _configuration.GetSection("Jwt").Get<JwtSettings>()
+            ?? throw new InvalidOperationException("Jwt settings are missing.");
     }
 
     public int RefreshTokenValidityInDays => 7;
