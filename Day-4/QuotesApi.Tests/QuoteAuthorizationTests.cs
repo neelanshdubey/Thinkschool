@@ -104,6 +104,20 @@ public class QuoteAuthorizationTests : IClassFixture<QuotesApiFactory>, IDisposa
     }
 
     [Fact]
+    public async Task Delete_WithoutUserIdClaim_ReturnsForbidden()
+    {
+        var quoteId = await CreateQuoteAsync(ownerId: 1);
+
+        // Authenticated (TestAuthHandler always succeeds), but with no Sub/
+        // NameIdentifier claim at all, so GetUserId() returns null and the
+        // same-owner requirement can never succeed for any resource.
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/quotes/{quoteId}");
+        var response = await _client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
     public async Task Delete_OwnQuote_Succeeds()
     {
         var quoteId = await CreateQuoteAsync(ownerId: 1);

@@ -153,4 +153,18 @@ public class TokenServiceTests
         // Assert
         validityInDays.Should().Be(7);
     }
+
+    [Fact]
+    public void Constructor_MissingJwtConfigurationSection_ThrowsInvalidOperationException()
+    {
+        // Arrange
+        var configuration = new ConfigurationBuilder().Build();
+
+        // Act
+        var act = () => new TokenService(configuration);
+
+        // Assert
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("Jwt settings are missing.");
+    }
 }

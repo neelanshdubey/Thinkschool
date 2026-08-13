@@ -18,9 +18,5 @@ public class RefreshToken
 
     public string FamilyId { get; set; } = string.Empty;
 
-    public bool IsExpired => DateTimeOffset.UtcNow >= ExpiresAt;
-
     public bool IsRevoked => RevokedAt.HasValue;
-
-    public bool IsActive => !IsExpired && !IsRevoked;
 }
