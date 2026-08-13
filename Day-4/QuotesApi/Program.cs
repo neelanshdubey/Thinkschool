@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using QuotesApi.Authorization;
 using QuotesApi.Extensions;
 using QuotesApi.Middleware;
@@ -13,6 +15,25 @@ builder.Host.UseSerilog((context, services, loggerConfig) =>
         .Enrich.FromLogContext());
 
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(r => r.AddService("QuotesApi"))
+    .WithTracing(t =>
+    {
+        t.AddAspNetCoreInstrumentation()
+         .AddEntityFrameworkCoreInstrumentation()
+         .AddHttpClientInstrumentation()
+         .AddSource("QuotesApi");
+
+        var otlpEndpoint = builder.Configuration["OpenTelemetry:OtlpEndpoint"];
+        if (!string.IsNullOrWhiteSpace(otlpEndpoint))
+        {
+            // The OTLP exporter defaults to gRPC, which requires HTTP/2 cleartext support
+            // when the endpoint is plain http:// (as it is for local collectors like Jaeger/Aspire).
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+            t.AddOtlpExporter(o => o.Endpoint = new Uri(otlpEndpoint));
+        }
+    });
 
 builder.Services.AddSingleton<IAuthorizationHandler, SameOwnerAuthorizationHandler>();
 
@@ -29,7 +50,8 @@ var app = builder.Build();
 
 app.Use((context, next) =>
 {
-    using (Serilog.Context.LogContext.PushProperty("TraceId", context.TraceIdentifier))
+    var traceId = System.Diagnostics.Activity.Current?.TraceId.ToString() ?? context.TraceIdentifier;
+    using (Serilog.Context.LogContext.PushProperty("TraceId", traceId))
     {
         return next();
     }

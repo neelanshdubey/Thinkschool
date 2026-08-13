@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using QuotesApi.Data;
+using QuotesApi.Diagnostics;
 using QuotesApi.Models;
 using QuotesApi.Services;
 
@@ -19,7 +20,7 @@ public static class AuthEndpointExtensions
             var user = await dbContext.Users
                 .SingleOrDefaultAsync(u => u.Email == request.Email);
 
-            if (user is null || !BCryptNet.BCrypt.Verify(request.Password, user.PasswordHash))
+            if (user is null || !VerifyPassword(user, request.Password))
             {
                 logger.LogWarning("Login failed for email {Email}", request.Email);
                 return Results.Unauthorized();
@@ -72,5 +73,13 @@ public static class AuthEndpointExtensions
         });
 
         return app;
+    }
+
+    private static bool VerifyPassword(User user, string password)
+    {
+        using var activity = Telemetry.Source.StartActivity("password-verification");
+        activity?.SetTag("user.id", user.Id);
+
+        return BCryptNet.BCrypt.Verify(password, user.PasswordHash);
     }
 }
