@@ -129,6 +129,10 @@ Real, growing (with jitter) exponential backoff delays are visible in the timest
 
 Nothing failed silently or hung indefinitely — the worst case (full retry exhaustion) took ~17s and returned a clear error.
 
+**Real terminal capture** of a later run of this same scenario — 3 concurrent requests, each retrying 3 times, then the circuit breaker opening:
+
+![Retry and circuit breaker firing in the terminal](QuotesApi/docs/resilience-retry-circuit-breaker.png)
+
 ## Proof: success run
 
 `BaseAddress` was reverted to the real `https://zenquotes.io/` endpoint:
@@ -140,6 +144,10 @@ HTTP 200, 1.31s
 ```
 
 No `ExternalQuotes.Resilience` log lines fired at all — a healthy dependency produces zero retry noise.
+
+**Real terminal capture** — 3 concurrent requests against the real endpoint, all returning real quotes with no retries:
+
+![Three concurrent requests succeeding cleanly against the real endpoint](QuotesApi/docs/resilience-success.png)
 
 ## What this session taught
 
